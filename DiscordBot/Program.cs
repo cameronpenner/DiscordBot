@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 
 namespace DiscordBot
-{
+{C:\Users\User\Documents\GitHub\DiscordBot\DiscordBot\Program.cs
 	internal class Program
 	{
 		private static void Main(string[] args)
@@ -61,6 +61,7 @@ namespace DiscordBot
 		{
 			var cService = _client.GetService<CommandService>();
 
+            /*
 			cService.CreateCommand("roll")
 				.Description("Rolls dice.")
 				.Parameter("roll", ParameterType.Unparsed)
@@ -69,6 +70,80 @@ namespace DiscordBot
 					string message = $"We're still working on this feature...";
 					await e.Channel.SendMessage(message);
 				});
+            */
+
+              //Rol dice command begin
+                        cService.CreateCommand("roll")
+            .Description("Rolls dice. Usage: !roll 6 - rolls six sided die and returns the result.")
+            .Parameter("multiplier")
+            .Parameter("side")
+            .Parameter("sign")
+            .Parameter("modifier")
+            .Do(async (e) =>
+            {
+                int value = 1;
+                int mult = 1;
+                int mod = 0;
+ 
+                if (Int32.TryParse(e.GetArg("modifier"), out value))
+                {
+                    mod = Int32.Parse(e.GetArg("modifier"));
+                }
+ 
+                if (Int32.TryParse(e.GetArg("multiplier"), out value))
+                {
+                    //We're fine.
+                    mult = Int32.Parse(e.GetArg("multiplier"));
+                }
+                else
+                {
+                    await e.Channel.SendMessage("I can't do that. Please ensure the multiplier is a whole number.");
+                    await e.Channel.SendMessage("Use `!help roll` for further information.");
+                    await e.Channel.SendMessage("I will use the multiplier `1` instead.");
+                }
+ 
+                if (Int32.TryParse(e.GetArg("side"), out value))
+                {
+                    Random rnd = new Random();
+                    await e.Channel.SendMessage("Okay. Rolling " + mult + " " + Math.Abs(Int32.Parse(e.GetArg("side"))) + " sided die.");
+ 
+                    int result = 0;
+                    int[] rolls = new int[mult];
+                    int temp;
+                    int count = 0;
+ 
+                    while (mult != 0)
+                    {
+                        temp = rnd.Next(1, Math.Abs(Int32.Parse(e.GetArg("side"))) + 1);
+                        rolls[count] = temp;
+                        count += 1;
+                        result += temp;
+                        mult--;
+                    }
+ 
+                    var results = string.Join(" + ", rolls.Select(x => x.ToString()).ToArray());
+                   
+                   
+                    await e.Channel.SendMessage("Total: " + results + " = " + result);
+                    int total;
+                    if (e.GetArg("sign") == "-")
+                    {
+                        total = result - mod;
+                        await e.Channel.SendMessage(result + " - " + mod + " = " + total);
+                    }
+                    else
+                    {
+                        total = result + mod;
+                        await e.Channel.SendMessage(result + " + " + mod + " = " + total);
+                    }
+                }
+                else
+                {
+                    await e.Channel.SendMessage("I can't do that. Please ensure the number of sides is a whole number.");
+                    await e.Channel.SendMessage("Use `!help roll` for further information.");
+                }
+            });
+ 
 
 			cService.CreateCommand("follow")
 				.Description("Gives the user a discord role")
