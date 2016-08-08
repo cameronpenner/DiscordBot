@@ -75,7 +75,7 @@ namespace DiscordBot
 				.Parameter("edition", ParameterType.Unparsed)
 				.Do(async (e) =>
 				{
-					string[] openRoles = new string[] { "@5e", "@pathfinder", "@3.5" };
+					string[] openRoles = new string[] { "5e", "pathfinder", "3.5" };
 					string edition = e.GetArg("edition");
 
 					bool found = false;
