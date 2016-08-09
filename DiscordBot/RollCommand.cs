@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DiscordBot
@@ -14,6 +15,8 @@ namespace DiscordBot
 			_message = "";
 			string errorMessage = "There was an error, try the format: !roll 5d3 -3";
 
+			Regex.Replace(parameters, @"(?<=-|\+)\s+", "");
+
 			string[] tokens = parameters.Split(' ');
 
 			int total = 0;
@@ -23,8 +26,8 @@ namespace DiscordBot
 				foreach(var token in tokens)
 				{
 					total += GetValue(token);
-					_message += $"\n\n**Total: {total}**";
 				}
+				_message += $"\n**Total: {total}**";
 			}
 			catch(Exception e)
 			{
@@ -40,8 +43,7 @@ namespace DiscordBot
 
 			if(int.TryParse(roll, out result))
 			{
-				string sign = result > 1 ? "+" : "";
-				_message += $" {sign}{result}";
+				_message += $" {result}\n";
 			}
 			else
 			{
@@ -61,6 +63,7 @@ namespace DiscordBot
 
 			int mult;
 			int sides;
+			int sign = 1;
 
 			if(numbers.Length != 2)
 			{
@@ -79,11 +82,17 @@ namespace DiscordBot
 
 			int output = 0;
 
+			if(mult < 0)
+			{
+				sign = -1;
+				mult *= -1;
+			}
+
 			_message += $" {roll}[";
 			Random rand = new Random();
 			while(mult > 0)
 			{
-				int rollResult = rand.Next(1, sides + 1);
+				int rollResult = rand.Next(1, sides + 1) * sign;
 
 				_message += rollResult;
 				if(mult > 1)
@@ -94,7 +103,7 @@ namespace DiscordBot
 				output += rollResult;
 				mult--;
 			}
-			_message += "]";
+			_message += "]\n";
 
 			return output;
 		}
