@@ -33,7 +33,6 @@ namespace DiscordBot
         private Dictionary<string, Spell> map()
         {
             JsonSerializer serializer = new JsonSerializer();
-            StreamReader file = File.OpenText(@"resources/spells.json");
             using(var client = new WebClient()){
                 var json = client.DownloadString("https://raw.githubusercontent.com/tadzik/5e-spells/master/spells.json");
                 return JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
