@@ -7,27 +7,14 @@ using System.Text;
 
 namespace DiscordBot
 {
-	public class MonsterSearch
+	public class MonsterSearch : Singleton<MonsterSearch>
 	{
-		private static MonsterSearch instance;
 		private List<Monster> monsters;
 
-		private MonsterSearch()
+		public MonsterSearch()
 		{
-		}
-
-		public static MonsterSearch Instance
-		{
-			get
-			{
-				if(instance == null)
-				{
-					instance = new MonsterSearch();
-					string json = File.ReadAllText(@"resources/monsters.json");
-					instance.monsters = JsonConvert.DeserializeObject<List<Monster>>(json);
-				}
-				return instance;
-			}
+			string json = File.ReadAllText(@"resources/monsters.json");
+			monsters = JsonConvert.DeserializeObject<List<Monster>>(json);
 		}
 
 		public string Search(string query)

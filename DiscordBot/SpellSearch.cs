@@ -6,27 +6,14 @@ using System.Text;
 
 namespace DiscordBot
 {
-	public class SpellSearch
+	public class SpellSearch : Singleton<SpellSearch>
 	{
-		private static SpellSearch instance;
 		private Dictionary<string, Spell> spells;
 
-		private SpellSearch()
+		public SpellSearch()
 		{
-		}
-
-		public static SpellSearch Instance
-		{
-			get
-			{
-				if(instance == null)
-				{
-					instance = new SpellSearch();
-					string json = File.ReadAllText(@"resources/spells.json");
-					instance.spells = JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
-				}
-				return instance;
-			}
+			string json = File.ReadAllText(@"resources/spells.json");
+			spells = JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
 		}
 
 		public string Search(string query)
