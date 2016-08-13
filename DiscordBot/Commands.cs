@@ -24,8 +24,19 @@ namespace DiscordBot
                 .Parameter("parameters", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
-                    var spell = new SpellSearch();
+                    var spell = SpellSearch.Instance;
                     string message = spell.Search(e.GetArg("parameters"));
+
+                    await e.Channel.SendMessage(message);
+                });
+
+            cService.CreateCommand("monster")
+                .Description("Searches all monsters with !monster query")
+                .Parameter("parameters", ParameterType.Unparsed)
+                .Do(async (e) =>
+                {
+                    var monster = MonsterSearch.Instance;
+                    string message = monster.Search(e.GetArg("parameters"));
 
                     await e.Channel.SendMessage(message);
                 });

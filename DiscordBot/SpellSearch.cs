@@ -13,31 +13,42 @@ namespace DiscordBot
 {
     public class SpellSearch
     {
+        private static SpellSearch instance;
+        Dictionary<string, Spell> spells;
+
+        private SpellSearch()
+        {
+        }
+
+        public static SpellSearch Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new SpellSearch();
+                    string json = File.ReadAllText(@"resources/spells.json");
+                    instance.spells = JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
+                }
+                return instance;
+            }
+        }
 
         public string Search(string query)
         {
-            Dictionary <string, Spell> spells = map();
             KeyValuePair<string, Spell> result = spells.FirstOrDefault(kvp => kvp.Key.ToLower().Contains(query.ToLower()));
-            StringBuilder MyStringBuilder = new StringBuilder();
-            MyStringBuilder.AppendLine("> **Spell:** *" + result.Key + "*");
-            MyStringBuilder.AppendLine("> **Description:** " + result.Value.description);
-            MyStringBuilder.AppendLine("> **Casting Time:** " + result.Value.casting_time);
-            MyStringBuilder.AppendLine("> **Range:** " + result.Value.range);
-            MyStringBuilder.AppendLine("> **Level:** " + result.Value.level);
-            MyStringBuilder.AppendLine("> **School:** " + result.Value.school);
-            return MyStringBuilder.ToString();
-            
-
-        }
-
-        private Dictionary<string, Spell> map()
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            using(var client = new WebClient()){
-                var json = client.DownloadString("https://raw.githubusercontent.com/tadzik/5e-spells/master/spells.json");
-                return JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
+            if(result.Key == null)
+            {
+                return "I am sorry to inform you that no spell could be found, please check for typos";
             }
-            
+            StringBuilder MyStringBuilder = new StringBuilder();
+            MyStringBuilder.AppendLine("**Spell:** *" + result.Key + "*");
+            MyStringBuilder.AppendLine("**Description:** " + result.Value.description);
+            MyStringBuilder.AppendLine("**Casting Time:** " + result.Value.casting_time);
+            MyStringBuilder.AppendLine("**Range:** " + result.Value.range);
+            MyStringBuilder.AppendLine("**Level:** " + result.Value.level);
+            MyStringBuilder.AppendLine("**School:** " + result.Value.school);
+            return MyStringBuilder.ToString();
         }
     }
 }
