@@ -2,7 +2,6 @@
 using Discord.Commands;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace DiscordBot
 {
@@ -59,53 +58,10 @@ namespace DiscordBot
 
 		public void CreateCommands()
 		{
-			var cService = _client.GetService<CommandService>();
+			CommandService cService = _client.GetService<CommandService>();
 
-			cService.CreateCommand("roll")
-				.Description("Rolls dice.")
-				.Parameter("roll", ParameterType.Unparsed)
-				.Do(async (e) =>
-				{
-					string message = $"We're still working on this feature...";
-					await e.Channel.SendMessage(message);
-				});
-
-			cService.CreateCommand("follow")
-				.Description("Gives the user a discord role")
-				.Parameter("edition", ParameterType.Unparsed)
-				.Do(async (e) =>
-				{
-					string[] openRoles = new string[] { "@5e", "@pathfinder", "@3.5" };
-					string edition = e.GetArg("edition");
-
-					bool found = false;
-
-					foreach(var role in openRoles)
-					{
-						if(edition.Equals(role))
-						{
-							found = true;
-						}
-					}
-
-					if(found)
-					{
-						await e.User.AddRoles(e.Server.Roles.Where(x => x.Name == edition).First());
-						string message = $"@{e.User.Name}, you are now following {edition}!";
-						await e.Channel.SendMessage(message);
-					}
-					else
-					{
-						string message = "That role doesn't exist, try one of: ";
-
-						foreach(var role in openRoles)
-						{
-							message += "[" + role + "] ";
-						}
-
-						await e.Channel.SendMessage(message);
-					}
-				});
+			var commands = new Commands();
+			commands.AddCommands(cService);
 		}
 
 		public void Log(object sender, LogMessageEventArgs e)
