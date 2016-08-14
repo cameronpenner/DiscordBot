@@ -1,9 +1,10 @@
 ﻿using Discord.Commands;
+using System;
 using System.Linq;
 
 namespace DiscordBot
 {
-    internal class Commands
+	internal class Commands
 	{
 		public void AddCommands(CommandService cService)
 		{
@@ -19,29 +20,35 @@ namespace DiscordBot
 					await e.Channel.SendMessage(message);
 				});
 
-            cService.CreateCommand("spell")
-                .Description("Searches all spells with !spell query")
-                .Parameter("parameters", ParameterType.Unparsed)
-                .Do(async (e) =>
-                {
-                    var spell = SpellSearch.Instance;
-                    string message = spell.Search(e.GetArg("parameters"));
+			cService.CreateCommand("spell")
+				.Description("Searches all spells with !spell query")
+				.Parameter("parameters", ParameterType.Unparsed)
+				.Do(async (e) =>
+				{
+					var spell = SpellSearch.Instance;
+					string message = spell.Search(e.GetArg("parameters"));
 
-                    await e.Channel.SendMessage(message);
-                });
+					await e.Channel.SendMessage(message);
+				});
 
-            cService.CreateCommand("monster")
-                .Description("Searches all monsters with !monster query")
-                .Parameter("parameters", ParameterType.Unparsed)
-                .Do(async (e) =>
-                {
-                    var monster = MonsterSearch.Instance;
-                    string message = monster.Search(e.GetArg("parameters"));
+			cService.CreateCommand("monster")
+				.Description("Searches all monsters with !monster query")
+				.Parameter("parameters", ParameterType.Unparsed)
+				.Do(async (e) =>
+				{
+					try
+					{
+						var monster = MonsterSearch.Instance;
+						string message = monster.Search(e.GetArg("parameters"));
+						await e.Channel.SendMessage(message);
+					}
+					catch(Exception exception)
+					{
+						Console.WriteLine($"[{exception.Source}]{exception.Message}");
+					}
+				});
 
-                    await e.Channel.SendMessage(message);
-                });
-
-            cService.CreateCommand("follow")
+			cService.CreateCommand("follow")
 				.Description("Gives the user a discord role")
 				.Parameter("edition", ParameterType.Unparsed)
 				.Do(async (e) =>
