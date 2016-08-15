@@ -1,4 +1,4 @@
-﻿namespace DiscordBot
+namespace DiscordBot
 {
 	public abstract class Singleton<T> where T : class, new()
 	{

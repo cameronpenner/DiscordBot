@@ -36,16 +36,21 @@ namespace DiscordBot
 				.Parameter("parameters", ParameterType.Unparsed)
 				.Do(async (e) =>
 				{
-					try
-					{
-						var monster = MonsterSearch.Instance;
-						string message = monster.Search(e.GetArg("parameters"));
-						await e.Channel.SendMessage(message);
-					}
-					catch(Exception exception)
-					{
-						Console.WriteLine($"[{exception.Source}]{exception.Message}");
-					}
+					var monster = MonsterSearch.Instance;
+					string message = monster.Search(e.GetArg("parameters"));
+
+					await e.Channel.SendMessage(message);
+				});
+
+			cService.CreateCommand("encounter")
+				.Description("Generates a random enounter. Usage: !encounter 1 2 2 4 (Where the numbers are the player's levels)")
+				.Parameter("parameters", ParameterType.Unparsed)
+				.Do(async (e) =>
+				{
+					var encounter = EncounterCommand.Instance;
+					string message = encounter.GenerateEncounter(e.GetArg("parameters"));
+
+					await e.Channel.SendMessage(message);
 				});
 
 			cService.CreateCommand("follow")

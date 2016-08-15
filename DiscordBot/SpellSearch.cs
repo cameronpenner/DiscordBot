@@ -1,4 +1,4 @@
-﻿using DiscordBot.utility;
+using DiscordBot.utility;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;

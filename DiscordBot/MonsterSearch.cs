@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 
 namespace DiscordBot
+
 {
 	public class MonsterSearch : Singleton<MonsterSearch>
 	{
