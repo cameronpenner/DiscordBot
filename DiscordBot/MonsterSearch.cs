@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DiscordBot.utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,33 +7,25 @@ using System.Linq;
 using System.Text;
 
 namespace DiscordBot
+
 {
-	public class MonsterSearch
+	public class MonsterSearch : Singleton<MonsterSearch>
 	{
-		private static MonsterSearch instance;
 		private List<Monster> monsters;
 
-		private MonsterSearch()
+		public MonsterSearch()
 		{
-		}
-
-		public static MonsterSearch Instance
-		{
-			get
-			{
-				if(instance == null)
-				{
-					instance = new MonsterSearch();
-					string json = File.ReadAllText(@"resources/monsters.json");
-					instance.monsters = JsonConvert.DeserializeObject<List<Monster>>(json);
-				}
-				return instance;
-			}
+			string json = File.ReadAllText(@"resources/monsters.json");
+			monsters = JsonConvert.DeserializeObject<List<Monster>>(json);
 		}
 
 		public string Search(string query)
 		{
-			Monster result = monsters.FirstOrDefault(kvp => kvp.name.ToLower().Equals(query.ToLower()));
+			Monster result = monsters
+							.Where(m => m.name.ToLower().Contains(query.ToLower()))
+							.OrderBy(m => LevenshteinDistance.Compute(m.name, query))
+							.First();
+
 			if(result == null)
 			{
 				return "I am sorry to inform you that no monster could be found, please check for typos";

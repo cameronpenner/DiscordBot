@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+using DiscordBot.utility;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,32 +7,22 @@ using System.Text;
 
 namespace DiscordBot
 {
-	public class SpellSearch
+	public class SpellSearch : Singleton<SpellSearch>
 	{
-		private static SpellSearch instance;
 		private Dictionary<string, Spell> spells;
 
-		private SpellSearch()
+		public SpellSearch()
 		{
-		}
-
-		public static SpellSearch Instance
-		{
-			get
-			{
-				if(instance == null)
-				{
-					instance = new SpellSearch();
-					string json = File.ReadAllText(@"resources/spells.json");
-					instance.spells = JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
-				}
-				return instance;
-			}
+			string json = File.ReadAllText(@"resources/spells.json");
+			spells = JsonConvert.DeserializeObject<Dictionary<string, Spell>>(json);
 		}
 
 		public string Search(string query)
 		{
-			KeyValuePair<string, Spell> result = spells.FirstOrDefault(kvp => kvp.Key.ToLower().Contains(query.ToLower()));
+			KeyValuePair<string, Spell> result = spells
+							.Where(m => m.Key.ToLower().Contains(query.ToLower()))
+							.OrderBy(m => LevenshteinDistance.Compute(m.Key, query))
+							.First();
 			if(result.Key == null)
 			{
 				return "I am sorry to inform you that no spell could be found, please check for typos";
