@@ -1,5 +1,6 @@
 ﻿using DiscordBot.model;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -33,15 +34,13 @@ namespace DiscordBot
 				WebClient client = new WebClient();
 				string downloadString = client.DownloadString(URL);
 
-				Encounter encounter;
+				dynamic encounter = JObject.Parse(downloadString);
 
-				encounter = JsonConvert.DeserializeObject<Encounter>(downloadString);
-
-				string message = "**Encounter**" + encounter.awardValue;
+				string message = $"**Encounter, {encounter.awardValue}xp**\n\n";
 
 				foreach(var monster in encounter.monsters)
 				{
-					message += $"{monster.qty} {monster.name}, ";
+					message += monster + "\n\n";
 				}
 
 				return message;
