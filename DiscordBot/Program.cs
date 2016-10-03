@@ -52,7 +52,7 @@ namespace DiscordBot
 
 			_client.ExecuteAndWait(async () =>
 			{
-				await _client.Connect(token);
+				await _client.Connect(token, TokenType.Bot);
 			});
 		}
 
